@@ -10,8 +10,8 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 
-TRAIN_DIR = 'train'
-TEST_DIR = 'test'
+TRAIN_DIR = 'dataset/train'
+TEST_DIR = 'dataset/test1'
 IMG_SIZE = 50
 LR = 1e-3
 MODEL_NAME = 'dogs-vs-cats-convnet'
@@ -52,11 +52,11 @@ def create_test_data():
 
 
 # If dataset is not created
-train_data = create_train_data()
-test_data = create_test_data()
+# train_data = create_train_data()
+# test_data = create_test_data()
 # If dataset is already created
-# train_data = np.load('train_data.npy')
-# test_data = np.load('test_data.npy')
+train_data = np.load('train_data.npy')
+test_data = np.load('test_data.npy')
 train = train_data[:-500]
 test = train_data[-500:]
 X_train = np.array([i[0] for i in train]).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
@@ -80,9 +80,9 @@ convnet = max_pool_2d(convnet, 5)
 convnet = fully_connected(convnet, 1024, activation='relu')
 convnet = dropout(convnet, 0.8)
 convnet = fully_connected(convnet, 2, activation='softmax')
-convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categorical_crossentropy', name='output')
+convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categorical_crossentropy', name='targets')
 model = tflearn.DNN(convnet, tensorboard_dir='log', tensorboard_verbose=0)
-model.fit({'input': X_train}, {'targets': y_train}, n_epoch=10, validation_set = ({'input': X_test}, {'targets': y_test}), snapshot_step = 500, show_metric = True, run_id = MODEL_NAME)
+model.fit({'input': X_train}, {'targets': y_train}, n_epoch=10, validation_set=({'input': X_test}, {'targets': y_test}), snapshot_step=500, show_metric=True, run_id=MODEL_NAME)
 
 fig = plt.figure(figsize=(16, 12))
 
